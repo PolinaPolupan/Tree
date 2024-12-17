@@ -7,15 +7,8 @@ class TreeNode {
 public:
 	using ValueT = _ValueT;
 
-	TreeNode(): 
-		_weight(0),
-		_child(nullptr), 
-		_sibling(nullptr) {}
-	TreeNode(const ValueT& value): 
-		_value(value), 
-		_weight(0),
-		_child(nullptr), 
-		_sibling(nullptr) {}
+	TreeNode(): TreeNode<ValueT>(0, 0) {}
+	TreeNode(const ValueT& value): TreeNode<ValueT>(value, 0) {}
 	TreeNode(const ValueT& value, const int& weight): 
 		_value(value), 
 		_weight(weight), 

@@ -1,6 +1,6 @@
 ﻿
 add_library(tree_lib
-tree.cpp
+INTERFACE
 "include/TreeBase.h" 
 "include/TreeNode.h" 
 "include/Iterator.h" 
@@ -9,9 +9,9 @@ tree.cpp
 "include/Obst.h"
 )
 
-target_compile_features(tree_lib PRIVATE cxx_std_17)
+target_compile_features(tree_lib INTERFACE cxx_std_17)
 
-target_include_directories(tree_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(tree_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Define the main executable
 add_executable(tree_exe main.cpp)
