@@ -42,6 +42,7 @@ public:
 
     void addNodeStatic(NodeT* node);
     void removeNodeStatic(NodeT* node);
+    int getTotalCost() { return _cost[0][_cost.size() - 1]; }
     Obst<NodeT> difference(Obst<NodeT>& other);
 
 private:

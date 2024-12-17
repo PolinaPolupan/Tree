@@ -49,6 +49,10 @@ void printImage(std::string fileName, const char* extension, TreeBase<NodeT>& tr
 
     addEdges(tree.getRoot(), agnodes, g);
 
+    int cost = static_cast<Obst<NodeT>&>(tree).getTotalCost();
+
+    addLegend(g, 1, maxWeight, cost);
+
     gvLayout(gvc, g, "dot");
 
     fileName = fileName + "." + extension;
@@ -109,4 +113,46 @@ void addEdges(NodeT* node, std::map<NodeT*, Agnode_t*>& agnodes, Agraph_t* g) {
 
     addEdges(node->getChild(), agnodes, g);
     addEdges(node->getSibling(), agnodes, g);
+}
+
+void addLegend(Agraph_t* g, int minWeight, int maxWeight, int cost) {
+    // Create a subgraph for the legend
+    Agraph_t* legend = agsubg(g, (char*)"cluster_legend", true);
+    agsafeset(legend, (char*)"label", (char*)"Legend", "");
+    agsafeset(legend, (char*)"style", (char*)"dotted", "");
+    agsafeset(legend, (char*)"fontname", (char*)"Verdana", "");
+
+    // Example legend nodes for different weight colors
+    for (int i = minWeight; i <= maxWeight; i += (maxWeight - minWeight) / 4) {
+        std::stringstream nodeName;
+        nodeName << "legend_node_" << i;
+
+        Agnode_t* legendNode = agnode(legend, (char*)nodeName.str().c_str(), true);
+
+        std::stringstream labelStream;
+        labelStream << i;
+
+        std::string fillColor = getDynamicBlueTint(i, minWeight, maxWeight);
+        agsafeset(legendNode, (char*)"label", (char*)labelStream.str().c_str(), "");
+        agsafeset(legendNode, (char*)"style", (char*)"filled", "");
+        agsafeset(legendNode, (char*)"fillcolor", (char*)fillColor.c_str(), "");
+        agsafeset(legendNode, (char*)"shape", (char*)"circle", "");
+        agsafeset(legendNode, (char*)"fontcolor", (char*)"#ffffff", ""); // Label color
+        agsafeset(legendNode, (char*)"width", (char*)"0.3", "");      // Set circle width
+        agsafeset(legendNode, (char*)"height", (char*)"0.3", "");     // Set circle height
+        agsafeset(legendNode, (char*)"fixedsize", (char*)"true", ""); // Ensure fixed size
+    }
+
+    Agraph_t* costCluster = agsubg(g, (char*)"cluster_cost", true);
+    agsafeset(costCluster, (char*)"style", (char*)"invis", ""); // Make the cluster invisible
+
+    std::stringstream costLabel;
+    costLabel << "Cost: " << cost;
+
+    Agnode_t* costNode = agnode(costCluster, (char*)"cost_node", true);
+    agsafeset(costNode, (char*)"label", (char*)costLabel.str().c_str(), "");
+    agsafeset(costNode, (char*)"shape", (char*)"box", "");
+    agsafeset(costNode, (char*)"style", (char*)"filled", "");
+    agsafeset(costNode, (char*)"fillcolor", (char*)"#eeeeee", ""); // Light gray background
+    agsafeset(costNode, (char*)"fontname", (char*)"Verdana", "");
 }
